@@ -4,9 +4,9 @@ from tqdm import tqdm
 
 
 def download_models(
-    models_dir: str = os.makedirs('pretrained_weights', exist_ok=True)
+    model_dir: str = os.makedirs('pretrained_weights', exist_ok=True)
 ):
-    os.makedirs(models_dir, exist_ok=True)
+    os.makedirs(model_dir, exist_ok=True)
 
     urls = ['https://download.openmmlab.com/mmdetection/v2.0/yolox/yolox_l_8x8_300e_coco/yolox_l_8x8_300e_coco_20211126_140236-d3bd2b23.pth',
         'https://huggingface.co/yzd-v/DWPose/resolve/main/dw-ll_ucoco_384.pth',
@@ -22,11 +22,12 @@ def download_models(
     paths = ['dwpose', 'dwpose', 'MusePose', 'MusePose', 'MusePose', 'MusePose', 'sd-image-variations-diffusers/unet', 'image_encoder', 'sd-vae-ft-mse']
 
     for path in paths:
-      os.makedirs(f'pretrained_weights/{path}', exist_ok=True)
+      dir = os.path.join(model_dir, path)
+      os.makedirs(dir, exist_ok=True)
 
-    # saving weights
     for url, path in tqdm(zip(urls, paths)):
-        filename = wget.download(url, f'pretrained_weights/{path}')
+        local_file_path = os.path.join("pretrained_weights", path)
+        wget.download(url, local_file_path)
 
     config_urls = ['https://huggingface.co/lambdalabs/sd-image-variations-diffusers/resolve/main/unet/config.json',
                'https://huggingface.co/lambdalabs/sd-image-variations-diffusers/resolve/main/image_encoder/config.json',
@@ -36,7 +37,10 @@ def download_models(
 
     # saving config files
     for url, path in tqdm(zip(config_urls, config_paths)):
-        filename = wget.download(url, f'pretrained_weights/{path}')
+        local_file_path = os.path.join("pretrained_weights", path)
+        wget.download(url, local_file_path)
 
     # renaming model name as given in readme
-    os.rename('pretrained_weights/dwpose/yolox_l_8x8_300e_coco_20211126_140236-d3bd2b23.pth', 'pretrained_weights/dwpose/yolox_l_8x8_300e_coco.pth')
+    wrong_file_path = os.path.join("pretrained_weights", "dwpose", "yolox_l_8x8_300e_coco_20211126_140236-d3bd2b23.pth")
+    correct_file_path = os.path.join("pretrained_weights", "dwpose", "yolox_l_8x8_300e_coco.pth")
+    os.rename(wrong_file_path, correct_file_path)
