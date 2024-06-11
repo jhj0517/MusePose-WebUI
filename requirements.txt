@@ -23,7 +23,8 @@ transformers==4.33.1
 moviepy==1.0.3
 wget==3.2
 wheel==0.43.0
-mmcv==2.1.0 --find-links https://download.openmmlab.com/mmcv/dist/cu121/torch2.1/index.html
+-f https://download.openmmlab.com/mmcv/dist/cu121/torch2.1/index.html
+mmcv==2.1.0
 mmengine==0.10.4
 mmdet==3.3.0
 mmpose==1.3.1
