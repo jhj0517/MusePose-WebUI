@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 
 def download_models(
-    models_dir:str = os.makedirs('pretrained_weights', exist_ok=True)
+    models_dir: str = os.makedirs('pretrained_weights', exist_ok=True)
 ):
     os.makedirs(models_dir, exist_ok=True)
 

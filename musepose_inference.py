@@ -21,17 +21,19 @@ from musepose.utils.util import get_fps, read_frames, save_videos_grid
 
 
 class MusePoseInference:
-    def __init__(self):
+    def __init__(self,
+                 model_dir,
+                 output_dir):
         self.image_gen_model_paths = {
-            "pretrained_base_model": os.path.join("pretrained_weights", "sd-image-variations-diffusers"),
-            "pretrained_vae": os.path.join("pretrained_weights", "sd-vae-ft-mse"),
-            "image_encoder": os.path.join("pretrained_weights", "image_encoder"),
+            "pretrained_base_model": os.path.join(model_dir, "sd-image-variations-diffusers"),
+            "pretrained_vae": os.path.join(model_dir, "sd-vae-ft-mse"),
+            "image_encoder": os.path.join(model_dir, "image_encoder"),
         }
         self.musepose_model_paths = {
-            "denoising_unet": os.path.join("pretrained_weights", "MusePose", "denoising_unet.pth"),
-            "reference_unet": os.path.join("pretrained_weights", "MusePose", "reference_unet.pth"),
-            "pose_guider": os.path.join("pretrained_weights", "MusePose", "pose_guider.pth"),
-            "motion_module": os.path.join("pretrained_weights", "MusePose", "motion_module.pth"),
+            "denoising_unet": os.path.join(model_dir, "MusePose", "denoising_unet.pth"),
+            "reference_unet": os.path.join(model_dir, "MusePose", "reference_unet.pth"),
+            "pose_guider": os.path.join(model_dir, "MusePose", "pose_guider.pth"),
+            "motion_module": os.path.join(model_dir, "MusePose", "motion_module.pth"),
         }
         self.inference_config_path = os.path.join("configs", "inference_v2.yaml")
         self.vae = None
@@ -40,7 +42,7 @@ class MusePoseInference:
         self.pose_guider = None
         self.image_enc = None
         self.pipe = None
-        self.output_dir = os.path.join("assets", "videos")
+        self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
