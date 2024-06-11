@@ -4,8 +4,8 @@ from pose_align import PoseAlignmentInference
 
 class App:
     def __init__(self):
-        self.pose_alignment_infer = MusePoseInference()
-        self.musepose_infer = PoseAlignmentInference()
+        self.pose_alignment_infer = PoseAlignmentInference()
+        self.musepose_infer = MusePoseInference()
 
     def musepose_demo(self):
         with gr.Blocks() as demo:
