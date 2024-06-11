@@ -1,8 +1,6 @@
 import argparse
 from omegaconf import OmegaConf
-import torch
-from pprint import pprint
-
+import os
 from musepose_inference import MusePoseInference
 
 
@@ -20,7 +18,8 @@ def parse_args():
     parser.add_argument("--steps", type=int,   default=20, help="DDIM sampling steps")
     parser.add_argument("--fps",   type=int)
     parser.add_argument("--weight_dtype", type=str, default="fp16")
-    parser.add_argument("--output_dir", type=str, default="./output")
+    parser.add_argument('--model_dir', type=str, default=os.path.join("pretrained_weights"), help='Pretrained models directory for MusePose')
+    parser.add_argument('--output_dir', type=str, default=os.path.join("assets", "videos"), help='Output directory for the result')
 
     parser.add_argument("--skip",  type=int,   default=1, help="frame sample rate = (skip+1)")
     args = parser.parse_args()
@@ -32,12 +31,15 @@ def main():
     args = parse_args()
     config = OmegaConf.load(args.config)
 
-    musepose_infer = MusePoseInference(config=config, output_dir=args.output_dir)
+    musepose_infer = MusePoseInference(
+        model_dir=args.model_dir,
+        output_dir=args.output_dir
+    )
 
     ref_image_path = list(config["test_cases"].keys())[0]
     pose_video_path = config["test_cases"][ref_image_path][0]
 
-    output_file_path = musepose_infer.infer_musepose(
+    output_file_path, output_demo_file_path = musepose_infer.infer_musepose(
         ref_image_path=ref_image_path,
         pose_video_path=pose_video_path,
         weight_dtype=args.weight_dtype,
