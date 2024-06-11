@@ -11,26 +11,6 @@ class App:
         self.pose_alignment_infer = PoseAlignmentInference()
         self.musepose_infer = MusePoseInference()
 
-    @staticmethod
-    def download_models():
-        repo_id = 'jhj0517/MusePose'
-        model_paths = {
-            "det_ckpt": os.path.join("pretrained_weights", "dwpose", "yolox_l_8x8_300e_coco.pth"),
-            "pose_ckpt": os.path.join("pretrained_weights", "dwpose", "dw-ll_ucoco_384.pth")
-        }
-        for name, file_path in model_paths.items():
-
-            local_dir, filename = os.path.dirname(file_path), os.path.basename(file_path)
-            if not os.path.exists(local_dir):
-                os.makedirs(local_dir)
-
-            remote_filepath = f"dwpose/{filename}"
-            if not os.path.exists(file_path):
-                print(file_path)
-                hf_hub_download(repo_id=repo_id, filename=remote_filepath,
-                                local_dir=local_dir,
-                                local_dir_use_symlinks=False)
-
     def musepose_demo(self):
         with gr.Blocks() as demo:
             with gr.Tabs():
@@ -51,13 +31,11 @@ class App:
 
                             with gr.Row():
                                 btn_algin_pose = gr.Button("ALIGN POSE", variant="primary")
-                                btn_down = gr.Button("download", variant="primary")
 
                 btn_algin_pose.click(fn=self.pose_alignment_infer.align_pose,
                                      inputs=[vid_dance_input, img_input, nb_detect_resolution, nb_image_resolution,
                                              nb_align_frame, nb_max_frame],
                                      outputs=[vid_dance_output, vid_dance_output_demo])
-                btn_down.click(fn=self.download_models, inputs=None, outputs=None)
 
                 with gr.TabItem('Step2: MusePose Inference'):
                     with gr.Row():

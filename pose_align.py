@@ -312,17 +312,16 @@ class PoseAlignmentInference:
 
     def download_models(self):
         repo_id = 'jhj0517/MusePose'
+        local_model_dir = os.path.join("pretrained_weights")
         for name, file_path in self.model_paths.items():
-
             local_dir, filename = os.path.dirname(file_path), os.path.basename(file_path)
             if not os.path.exists(local_dir):
                 os.makedirs(local_dir)
 
-            remote_filepath = os.path.join("dwpose", filename)
+            remote_filepath = f"dwpose/{filename}"
             if not os.path.exists(file_path):
-                print(file_path)
                 hf_hub_download(repo_id=repo_id, filename=remote_filepath,
-                                local_dir=local_dir,
+                                local_dir=local_model_dir,
                                 local_dir_use_symlinks=False)
 
     def release_vram(self):
