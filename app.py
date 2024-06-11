@@ -17,7 +17,7 @@ class App:
             model_dir=args.model_dir,
             output_dir=args.output_dir
         )
-        download_models(args.model_dir)
+        download_models(model_dir=args.model_dir)
 
     def musepose_demo(self):
         with gr.Blocks() as demo:
