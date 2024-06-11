@@ -24,7 +24,7 @@ class App:
             if not os.path.exists(local_dir):
                 os.makedirs(local_dir)
 
-            remote_filepath = os.path.join("dwpose", filename)
+            remote_filepath = f"dwpose/{filename}"
             if not os.path.exists(file_path):
                 print(file_path)
                 hf_hub_download(repo_id=repo_id, filename=remote_filepath,
