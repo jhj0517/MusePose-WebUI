@@ -26,8 +26,15 @@ def download_models(
       os.makedirs(dir, exist_ok=True)
 
     for url, path in tqdm(zip(urls, paths)):
-        local_file_path = os.path.join("pretrained_weights", path)
-        wget.download(url, local_file_path)
+        filename = os.path.basename(url)
+        if filename == "yolox_l_8x8_300e_coco_20211126_140236-d3bd2b23.pth":
+            filename = "yolox_l_8x8_300e_coco.pth"
+
+        full_file_path = os.path.join(model_dir, path, filename)
+
+        if not os.path.exists(full_file_path):
+            print(f"Model '{filename}' does not exists. Downloading to '{full_file_path}'..")
+            wget.download(url, full_file_path)
 
     config_urls = ['https://huggingface.co/lambdalabs/sd-image-variations-diffusers/resolve/main/unet/config.json',
                'https://huggingface.co/lambdalabs/sd-image-variations-diffusers/resolve/main/image_encoder/config.json',
@@ -37,10 +44,8 @@ def download_models(
 
     # saving config files
     for url, path in tqdm(zip(config_urls, config_paths)):
-        local_file_path = os.path.join("pretrained_weights", path)
-        wget.download(url, local_file_path)
-
-    # renaming model name as given in readme
-    wrong_file_path = os.path.join("pretrained_weights", "dwpose", "yolox_l_8x8_300e_coco_20211126_140236-d3bd2b23.pth")
-    correct_file_path = os.path.join("pretrained_weights", "dwpose", "yolox_l_8x8_300e_coco.pth")
-    os.rename(wrong_file_path, correct_file_path)
+        filename = os.path.basename(url)
+        full_file_path = os.path.join(model_dir, path, filename)
+        if not os.path.exists(full_file_path):
+            print(f"Model '{filename}' does not exists. Downloading to '{full_file_path}'..")
+            wget.download(url, full_file_path)
