@@ -42,6 +42,7 @@ class PoseAlignmentInference:
         align_frame: int,
         max_frame: int,
     ):
+        self.download_models()
         dt_file_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         outfn=os.path.abspath(os.path.join(self.output_dir, f'{dt_file_name}_demo.mp4'))
         outfn_align_pose_video=os.path.abspath(os.path.join(self.output_dir, f'{dt_file_name}.mp4'))
@@ -312,12 +313,14 @@ class PoseAlignmentInference:
     def download_models(self):
         repo_id = 'jhj0517/MusePose'
         for name, file_path in self.model_paths.items():
+
             local_dir, filename = os.path.dirname(file_path), os.path.basename(file_path)
             if not os.path.exists(local_dir):
                 os.makedirs(local_dir)
 
             remote_filepath = os.path.join("dwpose", filename)
             if not os.path.exists(file_path):
+                print(file_path)
                 hf_hub_download(repo_id=repo_id, filename=remote_filepath,
                                 local_dir=local_dir,
                                 local_dir_use_symlinks=False)
