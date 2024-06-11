@@ -30,7 +30,9 @@ class PoseAlignmentInference:
             "pose_config": os.path.join("pose", "config", "dwpose-l_384x288.py"),
             "det_config": os.path.join("pose", "config", "yolox_l_8xb8-300e_coco.py"),
         }
-        self.output_dir = os.path.join("assets", "video")
+        self.output_dir = os.path.join("assets", "videos")
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
         self.download_models()
 
     def align_pose(

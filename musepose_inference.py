@@ -40,7 +40,9 @@ class MusePoseInference:
         self.pose_guider = None
         self.image_enc = None
         self.pipe = None
-        self.output_dir = os.path.join("assets", "video")
+        self.output_dir = os.path.join("assets", "videos")
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
         self.download_models()
 
     def infer_musepose(
