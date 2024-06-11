@@ -31,7 +31,7 @@ class PoseAlignmentInference:
             "det_config": os.path.join("pose", "config", "yolox_l_8xb8-300e_coco.py"),
         }
         self.output_dir = os.path.join("assets", "video")
-        #self.download_models()
+        self.download_models()
 
     def align_pose(
         self,

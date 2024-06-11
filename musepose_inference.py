@@ -41,7 +41,7 @@ class MusePoseInference:
         self.image_enc = None
         self.pipe = None
         self.output_dir = os.path.join("assets", "video")
-        #self.download_models()
+        self.download_models()
 
     def infer_musepose(
         self,
