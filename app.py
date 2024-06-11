@@ -1,15 +1,23 @@
 import gradio as gr
+import argparse
 import os
-from huggingface_hub import hf_hub_download
 
 from musepose_inference import MusePoseInference
 from pose_align import PoseAlignmentInference
+from downloading_weights import download_models
 
 
 class App:
-    def __init__(self):
-        self.pose_alignment_infer = PoseAlignmentInference()
-        self.musepose_infer = MusePoseInference()
+    def __init__(self, args):
+        self.pose_alignment_infer = PoseAlignmentInference(
+            model_dir=args.model_dir,
+            output_dir=args.output_dir
+        )
+        self.musepose_infer = MusePoseInference(
+            model_dir=args.model_dir,
+            output_dir=args.output_dir
+        )
+        download_models(args.model_dir)
 
     def musepose_demo(self):
         with gr.Blocks() as demo:
@@ -82,5 +90,10 @@ class App:
 
 
 if __name__ == "__main__":
-    app = App()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_dir', type=str, default=os.path.join("pretrained_weights"), help='Pretrained models directory for MusePose')
+    parser.add_argument('--output_dir', type=str, default=os.path.join("assets", "videos"), help='Output directory for the result')
+    args = parser.parse_args()
+
+    app = App(args=args)
     app.launch()

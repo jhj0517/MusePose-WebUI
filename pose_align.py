@@ -20,17 +20,19 @@ from pose.script.util import size_calculate, warpAffine_kps
     scales: scale parameters
 '''
 class PoseAlignmentInference:
-    def __init__(self):
+    def __init__(self,
+                 model_dir,
+                 output_dir):
         self.detector = None
         self.model_paths = {
-            "det_ckpt": os.path.join("pretrained_weights", "dwpose", "yolox_l_8x8_300e_coco.pth"),
-            "pose_ckpt": os.path.join("pretrained_weights", "dwpose", "dw-ll_ucoco_384.pth")
+            "det_ckpt": os.path.join(model_dir, "dwpose", "yolox_l_8x8_300e_coco.pth"),
+            "pose_ckpt": os.path.join(model_dir, "dwpose", "dw-ll_ucoco_384.pth")
         }
         self.config_paths = {
             "pose_config": os.path.join("pose", "config", "dwpose-l_384x288.py"),
             "det_config": os.path.join("pose", "config", "yolox_l_8xb8-300e_coco.py"),
         }
-        self.output_dir = os.path.join("assets", "videos")
+        self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
