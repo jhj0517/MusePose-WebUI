@@ -75,3 +75,8 @@ class App:
     def launch(self):
         demo = self.musepose_demo()
         demo.queue().launch()
+
+
+if __name__ == "__main__":
+    app = App()
+    app.launch()
