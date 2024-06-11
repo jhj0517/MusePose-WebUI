@@ -57,7 +57,7 @@ class App:
                                      inputs=[vid_dance_input, img_input, nb_detect_resolution, nb_image_resolution,
                                              nb_align_frame, nb_max_frame],
                                      outputs=[vid_dance_output, vid_dance_output_demo])
-                btn_down(fn=self.download_models, inputs=None, outputs=None)
+                btn_down.click(fn=self.download_models, inputs=None, outputs=None)
 
                 with gr.TabItem('Step2: MusePose Inference'):
                     with gr.Row():
