@@ -17,7 +17,8 @@ class App:
             model_dir=args.model_dir,
             output_dir=args.output_dir
         )
-        download_models(model_dir=args.model_dir)
+        if not args.disable_model_download_at_start:
+            download_models(model_dir=args.model_dir)
 
     def musepose_demo(self):
         with gr.Blocks() as demo:
@@ -93,6 +94,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_dir', type=str, default=os.path.join("pretrained_weights"), help='Pretrained models directory for MusePose')
     parser.add_argument('--output_dir', type=str, default=os.path.join("assets", "videos"), help='Output directory for the result')
+    parser.add_argument('--disable_model_download_at_start', type=bool, default=False, nargs='?', const=True, help='Disable model download at start or not')
     args = parser.parse_args()
 
     app = App(args=args)
