@@ -23,15 +23,15 @@ from musepose.utils.util import get_fps, read_frames, save_videos_grid
 class MusePoseInference:
     def __init__(self):
         self.image_gen_model_paths = {
-            "pretrained_base_model": "lambdalabs/sd-image-variations-diffusers/unet",
-            "pretrained_vae": "stabilityai/sd-vae-ft-mse",
-            "image_encoder": "lambdalabs/sd-image-variations-diffusers/image_encoder",
+            "pretrained_base_model": os.path.join("pretrained_weights", "sd-image-variations-diffusers"),
+            "pretrained_vae": os.path.join("pretrained_weights", "sd-vae-ft-mse"),
+            "image_encoder": os.path.join("pretrained_weights", "image_encoder"),
         }
         self.musepose_model_paths = {
             "denoising_unet": os.path.join("pretrained_weights", "MusePose", "denoising_unet.pth"),
             "reference_unet": os.path.join("pretrained_weights", "MusePose", "reference_unet.pth"),
             "pose_guider": os.path.join("pretrained_weights", "MusePose", "pose_guider.pth"),
-            "motion_module": os.path.join("pretrained_weights", "MusePose", "pose_guider.pth"),
+            "motion_module": os.path.join("pretrained_weights", "MusePose", "motion_module.pth"),
         }
         self.inference_config_path = os.path.join("configs", "inference_v2.yaml")
         self.vae = None
@@ -43,7 +43,6 @@ class MusePoseInference:
         self.output_dir = os.path.join("assets", "videos")
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
-        self.download_models()
 
     def infer_musepose(
         self,
@@ -216,20 +215,6 @@ class MusePoseInference:
         )
         self.release_vram()
         return output_path, output_path_demo
-
-    def download_models(self):
-        repo_id = 'jhj0517/MusePose'
-        local_model_dir = os.path.join("pretrained_weights")
-        for name, file_path in self.musepose_model_paths.items():
-            local_dir, filename = os.path.dirname(file_path), os.path.basename(file_path)
-            if not os.path.exists(local_dir):
-                os.makedirs(local_dir)
-
-            remote_filepath = f"MusePose/{filename}"
-            if not os.path.exists(file_path):
-                hf_hub_download(repo_id=repo_id, filename=remote_filepath,
-                                local_dir=local_model_dir,
-                                local_dir_use_symlinks=False)
 
     def release_vram(self):
         models = [
