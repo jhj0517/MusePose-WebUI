@@ -40,6 +40,7 @@ def download_models(
                'https://huggingface.co/lambdalabs/sd-image-variations-diffusers/resolve/main/image_encoder/config.json',
                'https://huggingface.co/stabilityai/sd-vae-ft-mse/resolve/main/config.json']
 
+
     config_paths = ['sd-image-variations-diffusers/unet', 'image_encoder', 'sd-vae-ft-mse']
 
     # saving config files
