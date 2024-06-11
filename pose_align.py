@@ -1,5 +1,4 @@
 import numpy as np
-import argparse
 import torch
 import copy
 import cv2
@@ -7,10 +6,10 @@ import os
 import moviepy.video.io.ImageSequenceClip
 from datetime import datetime
 import gc
-from huggingface_hub import hf_hub_download
 
 from pose.script.dwpose import DWposeDetector, draw_pose
 from pose.script.util import size_calculate, warpAffine_kps
+from downloading_weights import download_models
 
 
 '''
@@ -32,6 +31,7 @@ class PoseAlignmentInference:
             "pose_config": os.path.join("pose", "config", "dwpose-l_384x288.py"),
             "det_config": os.path.join("pose", "config", "yolox_l_8xb8-300e_coco.py"),
         }
+        self.model_dir = model_dir
         self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
@@ -45,7 +45,7 @@ class PoseAlignmentInference:
         align_frame: int,
         max_frame: int,
     ):
-        self.download_models()
+        download_models(model_dir=self.model_dir)
         dt_file_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         outfn=os.path.abspath(os.path.join(self.output_dir, f'{dt_file_name}_demo.mp4'))
         outfn_align_pose_video=os.path.abspath(os.path.join(self.output_dir, f'{dt_file_name}.mp4'))

@@ -18,6 +18,7 @@ from musepose.models.unet_2d_condition import UNet2DConditionModel
 from musepose.models.unet_3d import UNet3DConditionModel
 from musepose.pipelines.pipeline_pose2vid_long import Pose2VideoPipeline
 from musepose.utils.util import get_fps, read_frames, save_videos_grid
+from downloading_weights import download_models
 
 
 class MusePoseInference:
@@ -42,6 +43,7 @@ class MusePoseInference:
         self.pose_guider = None
         self.image_enc = None
         self.pipe = None
+        self.model_dir = model_dir
         self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
@@ -62,6 +64,7 @@ class MusePoseInference:
         fps: int,
         skip: int
     ):
+        download_models(model_dir=self.model_dir)
         print(f"Model Paths: {self.musepose_model_paths}\n{self.image_gen_model_paths}\n{self.inference_config_path}")
         print(f"Input Image Path: {ref_image_path}")
         print(f"Pose Video Path: {pose_video_path}")
