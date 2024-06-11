@@ -33,7 +33,6 @@ class PoseAlignmentInference:
         self.output_dir = os.path.join("assets", "videos")
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
-        self.download_models()
 
     def align_pose(
         self,
@@ -311,20 +310,6 @@ class PoseAlignmentInference:
         print('pose align done')
         self.release_vram()
         return outfn_align_pose_video, outfn
-
-    def download_models(self):
-        repo_id = 'jhj0517/MusePose'
-        local_model_dir = os.path.join("pretrained_weights")
-        for name, file_path in self.model_paths.items():
-            local_dir, filename = os.path.dirname(file_path), os.path.basename(file_path)
-            if not os.path.exists(local_dir):
-                os.makedirs(local_dir)
-
-            remote_filepath = f"dwpose/{filename}"
-            if not os.path.exists(file_path):
-                hf_hub_download(repo_id=repo_id, filename=remote_filepath,
-                                local_dir=local_model_dir,
-                                local_dir_use_symlinks=False)
 
     def release_vram(self):
         if self.detector is not None:
