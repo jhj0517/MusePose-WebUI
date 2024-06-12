@@ -9,6 +9,7 @@ from downloading_weights import download_models
 
 class App:
     def __init__(self, args):
+        self.args = args
         self.pose_alignment_infer = PoseAlignmentInference(
             model_dir=args.model_dir,
             output_dir=args.output_dir
@@ -132,7 +133,9 @@ class App:
 
     def launch(self):
         demo = self.musepose_demo()
-        demo.queue().launch()
+        demo.queue().launch(
+            share=self.args.share
+        )
 
 
 if __name__ == "__main__":
@@ -140,6 +143,7 @@ if __name__ == "__main__":
     parser.add_argument('--model_dir', type=str, default=os.path.join("pretrained_weights"), help='Pretrained models directory for MusePose')
     parser.add_argument('--output_dir', type=str, default=os.path.join("outputs"), help='Output directory for the result')
     parser.add_argument('--disable_model_download_at_start', type=bool, default=False, nargs='?', const=True, help='Disable model download at start or not')
+    parser.add_argument('--share', type=bool, default=False, nargs='?', const=True, help='Gradio makes sharable link if it is true')
     args = parser.parse_args()
 
     app = App(args=args)
