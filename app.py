@@ -138,7 +138,7 @@ class App:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_dir', type=str, default=os.path.join("pretrained_weights"), help='Pretrained models directory for MusePose')
-    parser.add_argument('--output_dir', type=str, default=os.path.join("assets", "videos"), help='Output directory for the result')
+    parser.add_argument('--output_dir', type=str, default=os.path.join("outputs"), help='Output directory for the result')
     parser.add_argument('--disable_model_download_at_start', type=bool, default=False, nargs='?', const=True, help='Disable model download at start or not')
     args = parser.parse_args()
 
