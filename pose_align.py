@@ -46,9 +46,10 @@ class PoseAlignmentInference:
         max_frame: int,
     ):
         download_models(model_dir=self.model_dir)
-        dt_file_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        outfn=os.path.abspath(os.path.join(self.output_dir, f'{dt_file_name}_demo.mp4'))
-        outfn_align_pose_video=os.path.abspath(os.path.join(self.output_dir, f'{dt_file_name}.mp4'))
+        img_file_name = os.path.splitext(os.path.basename(imgfn_refer))[0]
+        vid_file_name = os.path.splitext(os.path.basename(vidfn))[0]
+        outfn=os.path.abspath(os.path.join(self.output_dir, "pose_alignment", f'img_{img_file_name}_vid_{vid_file_name}_demo.mp4'))
+        outfn_align_pose_video=os.path.abspath(os.path.join(self.output_dir, "pose_alignment", f'img_{img_file_name}_vid_{vid_file_name}.mp4'))
 
         video = cv2.VideoCapture(vidfn)
         width= video.get(cv2.CAP_PROP_FRAME_WIDTH)
