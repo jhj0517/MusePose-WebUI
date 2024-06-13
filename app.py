@@ -21,6 +21,12 @@ class App:
         if not args.disable_model_download_at_start:
             download_models(model_dir=args.model_dir)
 
+    @staticmethod
+    def on_step1_complete(input_img: str, input_pose_vid: str):
+
+        return [gr.Image(label="Input Image", value=input_img, type="filepath", scale=5),
+                gr.Video(label="Input Aligned Pose Video", value=input_pose_vid, scale=5)]
+
     def musepose_demo(self):
         with gr.Blocks() as demo:
             md_header = self.header()
@@ -28,11 +34,11 @@ class App:
                 with gr.TabItem('Step1: Pose Alignment'):
                     with gr.Row():
                         with gr.Column(scale=3):
-                            img_input = gr.Image(label="Input Image here", type="filepath", scale=5)
+                            img_pose_input = gr.Image(label="Input Image", type="filepath", scale=5)
                             vid_dance_input = gr.Video(label="Input Dance Video", scale=5)
                         with gr.Column(scale=3):
-                            vid_dance_output = gr.Video(label="Aligned pose output will be displayed here", scale=5)
-                            vid_dance_output_demo = gr.Video(label="Output demo video will be displayed here", scale=5)
+                            vid_dance_output = gr.Video(label="Aligned Pose Output", scale=5)
+                            vid_dance_output_demo = gr.Video(label="Aligned Pose Output Demo", scale=5)
                         with gr.Column(scale=3):
                             with gr.Column():
                                 nb_detect_resolution = gr.Number(label="Detect Resolution", value=512, precision=0)
@@ -47,25 +53,25 @@ class App:
                             [os.path.join("assets", "videos", "dance.mp4"), os.path.join("assets", "images", "ref.png"),
                              512, 720, 0, 300]]
                         ex_step1 = gr.Examples(examples=examples,
-                                               inputs=[vid_dance_input, img_input, nb_detect_resolution,
+                                               inputs=[vid_dance_input, img_pose_input, nb_detect_resolution,
                                                        nb_image_resolution, nb_align_frame, nb_max_frame],
                                                outputs=[vid_dance_output, vid_dance_output_demo],
                                                fn=self.pose_alignment_infer.align_pose,
                                                cache_examples="lazy")
 
                 btn_align_pose.click(fn=self.pose_alignment_infer.align_pose,
-                                     inputs=[vid_dance_input, img_input, nb_detect_resolution, nb_image_resolution,
+                                     inputs=[vid_dance_input, img_pose_input, nb_detect_resolution, nb_image_resolution,
                                              nb_align_frame, nb_max_frame],
                                      outputs=[vid_dance_output, vid_dance_output_demo])
 
                 with gr.TabItem('Step2: MusePose Inference'):
                     with gr.Row():
                         with gr.Column(scale=3):
-                            img_input = gr.Image(label="Input Image here", type="filepath", scale=5)
-                            vid_pose_input = gr.Video(label="Input Aligned Pose Video here", scale=5)
+                            img_musepose_input = gr.Image(label="Input Image", type="filepath", scale=5)
+                            vid_pose_input = gr.Video(label="Input Aligned Pose Video", scale=5)
                         with gr.Column(scale=3):
-                            vid_output = gr.Video(label="Output Video will be displayed here", scale=5)
-                            vid_output_demo = gr.Video(label="Output demo video will be displayed here", scale=5)
+                            vid_output = gr.Video(label="MusePose Output", scale=5)
+                            vid_output_demo = gr.Video(label="MusePose Output Demo", scale=5)
 
                         with gr.Column(scale=3):
                             with gr.Column():
@@ -93,7 +99,7 @@ class App:
                             [os.path.join("assets", "images", "ref.png"), os.path.join("assets", "videos", "pose.mp4"),
                              "fp16", 512, 512, 300, 48, 4, 3.5, 99, 20, -1, 1]]
                         ex_step2 = gr.Examples(examples=examples,
-                                               inputs=[img_input, vid_pose_input, weight_dtype, nb_width, nb_height,
+                                               inputs=[img_musepose_input, vid_pose_input, weight_dtype, nb_width, nb_height,
                                                        nb_video_frame_length, nb_video_slice_frame_length,
                                                        nb_video_slice_overlap_frame_number, nb_cfg, nb_seed, nb_steps,
                                                        nb_fps, nb_skip],
@@ -102,11 +108,15 @@ class App:
                                                cache_examples="lazy")
 
                 btn_generate.click(fn=self.musepose_infer.infer_musepose,
-                                   inputs=[img_input, vid_pose_input, weight_dtype, nb_width, nb_height,
+                                   inputs=[img_musepose_input, vid_pose_input, weight_dtype, nb_width, nb_height,
                                            nb_video_frame_length, nb_video_slice_frame_length,
                                            nb_video_slice_overlap_frame_number, nb_cfg, nb_seed, nb_steps, nb_fps,
                                            nb_skip],
                                    outputs=[vid_output, vid_output_demo])
+                vid_dance_output.change(fn=self.on_step1_complete,
+                                        inputs=[img_pose_input, vid_dance_output],
+                                        outputs=[img_musepose_input, vid_pose_input])
+
         return demo
 
     @staticmethod
