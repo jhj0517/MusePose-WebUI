@@ -48,16 +48,6 @@ class App:
 
                             with gr.Row():
                                 btn_align_pose = gr.Button("ALIGN POSE", variant="primary")
-                    with gr.Column():
-                        examples = [
-                            [os.path.join("assets", "videos", "dance.mp4"), os.path.join("assets", "images", "ref.png"),
-                             512, 720, 0, 300]]
-                        ex_step1 = gr.Examples(examples=examples,
-                                               inputs=[vid_dance_input, img_pose_input, nb_detect_resolution,
-                                                       nb_image_resolution, nb_align_frame, nb_max_frame],
-                                               outputs=[vid_dance_output, vid_dance_output_demo],
-                                               fn=self.pose_alignment_infer.align_pose,
-                                               cache_examples="lazy")
 
                 btn_align_pose.click(fn=self.pose_alignment_infer.align_pose,
                                      inputs=[vid_dance_input, img_pose_input, nb_detect_resolution, nb_image_resolution,
@@ -93,19 +83,6 @@ class App:
 
                             with gr.Row():
                                 btn_generate = gr.Button("GENERATE", variant="primary")
-
-                    with gr.Column():
-                        examples = [
-                            [os.path.join("assets", "images", "ref.png"), os.path.join("assets", "videos", "pose.mp4"),
-                             "fp16", 512, 512, 300, 48, 4, 3.5, 99, 20, -1, 1]]
-                        ex_step2 = gr.Examples(examples=examples,
-                                               inputs=[img_musepose_input, vid_pose_input, weight_dtype, nb_width, nb_height,
-                                                       nb_video_frame_length, nb_video_slice_frame_length,
-                                                       nb_video_slice_overlap_frame_number, nb_cfg, nb_seed, nb_steps,
-                                                       nb_fps, nb_skip],
-                                               outputs=[vid_output, vid_output_demo],
-                                               fn=self.musepose_infer.infer_musepose,
-                                               cache_examples="lazy")
 
                 btn_generate.click(fn=self.musepose_infer.infer_musepose,
                                    inputs=[img_musepose_input, vid_pose_input, weight_dtype, nb_width, nb_height,
