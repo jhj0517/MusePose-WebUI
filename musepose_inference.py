@@ -44,7 +44,7 @@ class MusePoseInference:
         self.image_enc = None
         self.pipe = None
         self.model_dir = model_dir
-        self.output_dir = output_dir
+        self.output_dir = os.path.join(output_dir, "musepose_inference")
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
@@ -83,8 +83,8 @@ class MusePoseInference:
         image_file_name = os.path.splitext(os.path.basename(ref_image_path))[0]
         pose_video_file_name = os.path.splitext(os.path.basename(pose_video_path))[0]
         output_file_name = f"img_{image_file_name}_pose_{pose_video_file_name}"
-        output_path = os.path.abspath(os.path.join(self.output_dir, "musepose_inference", f'{output_file_name}.mp4'))
-        output_path_demo = os.path.abspath(os.path.join(self.output_dir, "musepose_inference", f'{output_file_name}_demo.mp4'))
+        output_path = os.path.abspath(os.path.join(self.output_dir, f'{output_file_name}.mp4'))
+        output_path_demo = os.path.abspath(os.path.join(self.output_dir, f'{output_file_name}_demo.mp4'))
 
         if weight_dtype == "fp16":
             weight_dtype = torch.float16
