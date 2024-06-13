@@ -1,3 +1,14 @@
+---
+title: MusePose
+emoji: 🐢
+colorFrom: green
+colorTo: blue
+sdk: gradio
+sdk_version: 4.36.1
+app_file: app.py
+pinned: false
+license: other
+---
 # MusePose-WebUI
 Gradio-based WebUI For [MusePose](https://github.com/TMElyralab/MusePose)
 ![12](https://github.com/jhj0517/MusePose-WebUI/assets/97279763/6ee9b078-14dc-4855-b717-6d0fb30047ef)
