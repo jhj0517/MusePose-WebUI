@@ -32,7 +32,7 @@ class PoseAlignmentInference:
             "det_config": os.path.join("pose", "config", "yolox_l_8xb8-300e_coco.py"),
         }
         self.model_dir = model_dir
-        self.output_dir = output_dir
+        self.output_dir = os.path.join(output_dir, "pose_alignment")
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
@@ -48,8 +48,8 @@ class PoseAlignmentInference:
         download_models(model_dir=self.model_dir)
         img_file_name = os.path.splitext(os.path.basename(imgfn_refer))[0]
         vid_file_name = os.path.splitext(os.path.basename(vidfn))[0]
-        outfn=os.path.abspath(os.path.join(self.output_dir, "pose_alignment", f'img_{img_file_name}_vid_{vid_file_name}_demo.mp4'))
-        outfn_align_pose_video=os.path.abspath(os.path.join(self.output_dir, "pose_alignment", f'img_{img_file_name}_vid_{vid_file_name}.mp4'))
+        outfn=os.path.abspath(os.path.join(self.output_dir, f'img_{img_file_name}_vid_{vid_file_name}_demo.mp4'))
+        outfn_align_pose_video=os.path.abspath(os.path.join(self.output_dir, f'img_{img_file_name}_vid_{vid_file_name}.mp4'))
 
         video = cv2.VideoCapture(vidfn)
         width= video.get(cv2.CAP_PROP_FRAME_WIDTH)
