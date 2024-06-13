@@ -10,3 +10,4 @@ output
 venv/
 pretrained_weights/
 .idea/
+outputs/
