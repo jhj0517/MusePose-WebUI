@@ -100,20 +100,7 @@ class App:
     def header():
         header = gr.HTML(
             """
-            <style>
-            p, li {
-                font-size: 16px;
-            }
-            </style>
-
-            <h2>Gradio demo for <a href="https://github.com/TMElyralab/MusePose">MusePose</a></h2>
-
-            <p>Demo list you can try in other environment:</p>
-            <ul>
-                <li><a href="https://github.com/jhj0517/MusePose-WebUI"><strong>MusePose WebUI</strong></a> (This repository, you can try in local)</li>
-                <li><a href="https://github.com/jhj0517/stable-diffusion-webui-MusePose.git"><strong>stable-diffusion-webui-MusePose</strong></a> (SD WebUI extension)</li>
-                <li><a href="https://github.com/TMElyralab/Comfyui-MusePose"><strong>Comfyui-MusePose</strong></a> (ComfyUI custom node)</li>
-            </ul>
+            <h2><a href="https://github.com/jhj0517/MusePose-WebUI">MusePose WebUI</a></h2>
             """
         )
         return header
