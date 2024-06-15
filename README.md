@@ -28,5 +28,6 @@ python app.py
 ### Colab
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jhj0517/MusePose-WebUI/blob/main/notebook/musepose_webui.ipynb)
 
-
+## TODO🗓
+- [ ] Enhance face after MusePose inference
 
