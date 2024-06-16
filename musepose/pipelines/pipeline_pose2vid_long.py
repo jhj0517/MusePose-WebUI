@@ -3,6 +3,7 @@ import inspect
 import math
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Union
+import gradio as gr
 
 import numpy as np
 import torch
@@ -53,6 +54,7 @@ class Pose2VideoPipeline(DiffusionPipeline):
         image_proj_model=None,
         tokenizer=None,
         text_encoder=None,
+        gradio_progress: gr.Progress = gr.Progress(),
     ):
         super().__init__()
 
@@ -77,6 +79,7 @@ class Pose2VideoPipeline(DiffusionPipeline):
             do_convert_rgb=True,
             do_normalize=False,
         )
+        self.gradio_progress = gradio_progress
 
     def enable_vae_slicing(self):
         self.vae.enable_slicing()
@@ -117,6 +120,7 @@ class Pose2VideoPipeline(DiffusionPipeline):
         video = []
         for frame_idx in tqdm(range(latents.shape[0])):
             video.append(self.vae.decode(latents[frame_idx : frame_idx + 1]).sample)
+            self.gradio_progress(frame_idx / latents.shape[0], "Writing Video..")
         video = torch.cat(video)
         video = rearrange(video, "(b f) c h w -> b c f h w", f=video_length)
         video = (video / 2 + 0.5).clamp(0, 1)
@@ -448,6 +452,8 @@ class Pose2VideoPipeline(DiffusionPipeline):
         num_warmup_steps = len(timesteps) - num_inference_steps * self.scheduler.order
         with self.progress_bar(total=num_inference_steps) as progress_bar:
             for i, t in enumerate(timesteps):
+                self.gradio_progress(i / num_inference_steps, "Making Image Move..")
+
                 noise_pred = torch.zeros(
                     (
                         latents.shape[0] * (2 if do_classifier_free_guidance else 1),

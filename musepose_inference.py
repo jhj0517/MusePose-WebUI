@@ -11,7 +11,7 @@ from torchvision import transforms
 from transformers import CLIPVisionModelWithProjection
 import torch.nn.functional as F
 import gc
-from huggingface_hub import hf_hub_download
+import gradio as gr
 
 from musepose.models.pose_guider import PoseGuider
 from musepose.models.unet_2d_condition import UNet2DConditionModel
@@ -62,7 +62,8 @@ class MusePoseInference:
         seed: int,
         steps: int,
         fps: int,
-        skip: int
+        skip: int,
+        gradio_progress=gr.Progress()
     ):
         download_models(model_dir=self.model_dir)
         print(f"Model Paths: {self.musepose_model_paths}\n{self.image_gen_model_paths}\n{self.inference_config_path}")
@@ -143,6 +144,7 @@ class MusePoseInference:
             denoising_unet=self.denoising_unet,
             pose_guider=self.pose_guider,
             scheduler=scheduler,
+            gradio_progress=gradio_progress
         )
         self.pipe = self.pipe.to("cuda", dtype=weight_dtype)
 
