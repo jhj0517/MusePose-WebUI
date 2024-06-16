@@ -37,7 +37,7 @@ class App:
                             img_pose_input = gr.Image(label="Input Image", type="filepath", scale=5)
                             vid_dance_input = gr.Video(label="Input Dance Video", scale=5)
                         with gr.Column(scale=3):
-                            vid_dance_output = gr.Video(label="Aligned Pose Output", scale=5)
+                            vid_dance_output = gr.Video(label="Aligned Pose Output", scale=5, interactive=False)
                             vid_dance_output_demo = gr.Video(label="Aligned Pose Output Demo", scale=5)
                         with gr.Column(scale=3):
                             with gr.Column():
