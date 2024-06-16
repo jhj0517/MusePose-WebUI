@@ -186,7 +186,6 @@ class MusePoseInference:
             n_rows=3,
             fps=src_fps if fps is None or fps < 0 else fps,
         )
-        self.release_vram()
         return output_path, output_path_demo
 
     def init_model(self,
