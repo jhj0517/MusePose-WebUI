@@ -68,18 +68,10 @@ class PoseAlignmentInference:
         H_out, W_out = size_calculate(H_in,W_in, detect_resolution)
         H_out, W_out = size_calculate(H_out,W_out, image_resolution)
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.detector = DWposeDetector(
-            det_config = self.config_paths["det_config"],
-            det_ckpt = self.model_paths["det_ckpt"],
-            pose_config = self.config_paths["pose_config"],
-            pose_ckpt = self.model_paths["pose_ckpt"],
-            keypoints_only=False
-        )
-        detector = self.detector.to(device)
+        self.init_model()
 
         refer_img = cv2.imread(imgfn_refer)
-        output_refer, pose_refer = detector(refer_img,detect_resolution=detect_resolution, image_resolution=image_resolution, output_type='cv2',return_pose_dict=True)
+        output_refer, pose_refer = self.detector(refer_img,detect_resolution=detect_resolution, image_resolution=image_resolution, output_type='cv2',return_pose_dict=True)
         body_ref_img  = pose_refer['bodies']['candidate']
         hands_ref_img = pose_refer['hands']
         faces_ref_img = pose_refer['faces']
@@ -116,7 +108,7 @@ class PoseAlignmentInference:
 
             # estimate scale parameters by the 1st frame in the video
             if i==skip_frames:
-                output_1st_img, pose_1st_img = detector(img, detect_resolution, image_resolution, output_type='cv2', return_pose_dict=True)
+                output_1st_img, pose_1st_img = self.detector(img, detect_resolution, image_resolution, output_type='cv2', return_pose_dict=True)
                 body_1st_img  = pose_1st_img['bodies']['candidate']
                 hands_1st_img = pose_1st_img['hands']
                 faces_1st_img = pose_1st_img['faces']
@@ -243,7 +235,7 @@ class PoseAlignmentInference:
 
 
             # pose align
-            pose_img, pose_ori = detector(img, detect_resolution, image_resolution, output_type='cv2', return_pose_dict=True)
+            pose_img, pose_ori = self.detector(img, detect_resolution, image_resolution, output_type='cv2', return_pose_dict=True)
             video_pose_buffer.append(pose_img)
             pose_align = self.align_img(img, pose_ori, align_args, detect_resolution, image_resolution)
 
@@ -317,6 +309,17 @@ class PoseAlignmentInference:
         print('pose align done')
         self.release_vram()
         return outfn_align_pose_video, outfn
+
+    def init_model(self):
+        if self.detector is None:
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            self.detector = DWposeDetector(
+                det_config=self.config_paths["det_config"],
+                det_ckpt=self.model_paths["det_ckpt"],
+                pose_config=self.config_paths["pose_config"],
+                pose_ckpt=self.model_paths["pose_ckpt"],
+                keypoints_only=False
+            ).to(device)
 
     def release_vram(self):
         if self.detector is not None:
