@@ -5,7 +5,7 @@ from pathlib import Path
 import torch
 from diffusers import AutoencoderKL, DDIMScheduler
 from einops import repeat
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, DictConfig
 from PIL import Image
 from torchvision import transforms
 from transformers import CLIPVisionModelWithProjection
@@ -92,51 +92,17 @@ class MusePoseInference:
         else:
             weight_dtype = torch.float32
 
-        self.vae = AutoencoderKL.from_pretrained(
-            self.image_gen_model_paths["pretrained_vae"],
-        ).to("cuda", dtype=weight_dtype)
-
-        self.reference_unet = UNet2DConditionModel.from_pretrained(
-            self.image_gen_model_paths["pretrained_base_model"],
-            subfolder="unet",
-        ).to(dtype=weight_dtype, device="cuda")
-
         inference_config_path = self.inference_config_path
         infer_config = OmegaConf.load(inference_config_path)
-
-        self.denoising_unet = UNet3DConditionModel.from_pretrained_2d(
-            Path(self.image_gen_model_paths["pretrained_base_model"]),
-            Path(self.musepose_model_paths["motion_module"]),
-            subfolder="unet",
-            unet_additional_kwargs=infer_config.unet_additional_kwargs,
-        ).to(dtype=weight_dtype, device="cuda")
-
-        self.pose_guider = PoseGuider(320, block_out_channels=(16, 32, 96, 256)).to(
-            dtype=weight_dtype, device="cuda"
-        )
-
-        self.image_enc = CLIPVisionModelWithProjection.from_pretrained(
-            self.image_gen_model_paths["image_encoder"]
-        ).to(dtype=weight_dtype, device="cuda")
 
         sched_kwargs = OmegaConf.to_container(infer_config.noise_scheduler_kwargs)
         scheduler = DDIMScheduler(**sched_kwargs)
 
         generator = torch.manual_seed(seed)
-
         width, height = W, H
 
-        # load pretrained weights
-        self.denoising_unet.load_state_dict(
-            torch.load(self.musepose_model_paths["denoising_unet"], map_location="cpu"),
-            strict=False,
-        )
-        self.reference_unet.load_state_dict(
-            torch.load(self.musepose_model_paths["reference_unet"], map_location="cpu"),
-        )
-        self.pose_guider.load_state_dict(
-            torch.load(self.musepose_model_paths["pose_guider"], map_location="cpu"),
-        )
+        self.init_model(weight_dtype=weight_dtype, infer_config=infer_config)
+
         self.pipe = Pose2VideoPipeline(
             vae=self.vae,
             image_encoder=self.image_enc,
@@ -222,6 +188,49 @@ class MusePoseInference:
         )
         self.release_vram()
         return output_path, output_path_demo
+
+    def init_model(self,
+                   weight_dtype: torch.dtype,
+                   infer_config: DictConfig
+                   ):
+        if self.vae is None:
+            self.vae = AutoencoderKL.from_pretrained(
+                self.image_gen_model_paths["pretrained_vae"],
+            ).to("cuda", dtype=weight_dtype)
+
+        if self.reference_unet is None:
+            self.reference_unet = UNet2DConditionModel.from_pretrained(
+                self.image_gen_model_paths["pretrained_base_model"],
+                subfolder="unet",
+            ).to(dtype=weight_dtype, device="cuda")
+            self.reference_unet.load_state_dict(
+                torch.load(self.musepose_model_paths["reference_unet"], map_location="cpu"),
+            )
+
+        if self.denoising_unet is None:
+            self.denoising_unet = UNet3DConditionModel.from_pretrained_2d(
+                Path(self.image_gen_model_paths["pretrained_base_model"]),
+                Path(self.musepose_model_paths["motion_module"]),
+                subfolder="unet",
+                unet_additional_kwargs=infer_config.unet_additional_kwargs,
+            ).to(dtype=weight_dtype, device="cuda")
+            self.denoising_unet.load_state_dict(
+                torch.load(self.musepose_model_paths["denoising_unet"], map_location="cpu"),
+                strict=False,
+            )
+
+        if self.pose_guider is None:
+            self.pose_guider = PoseGuider(320, block_out_channels=(16, 32, 96, 256)).to(
+                dtype=weight_dtype, device="cuda"
+            )
+            self.pose_guider.load_state_dict(
+                torch.load(self.musepose_model_paths["pose_guider"], map_location="cpu"),
+            )
+
+        if self.image_enc is None:
+            self.image_enc = CLIPVisionModelWithProjection.from_pretrained(
+                self.image_gen_model_paths["image_encoder"]
+            ).to(dtype=weight_dtype, device="cuda")
 
     def release_vram(self):
         models = [
