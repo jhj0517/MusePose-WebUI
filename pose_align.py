@@ -6,6 +6,7 @@ import os
 import moviepy.video.io.ImageSequenceClip
 from datetime import datetime
 import gc
+import gradio as gr
 
 from pose.script.dwpose import DWposeDetector, draw_pose
 from pose.script.util import size_calculate, warpAffine_kps
@@ -44,6 +45,7 @@ class PoseAlignmentInference:
         image_resolution: int,
         align_frame: int,
         max_frame: int,
+        gradio_progress=gr.Progress()
     ):
         download_models(model_dir=self.model_dir)
         img_file_name = os.path.splitext(os.path.basename(imgfn_refer))[0]
@@ -278,6 +280,8 @@ class PoseAlignmentInference:
         result_demo = [] # = Writer(args, None, H, 3*W1+2*W2, outfn, fps)
         result_pose_only = [] # Writer(args, None, H, W1, args.outfn_align_pose_video, fps)
         for i in range(len(body_seq)):
+            gradio_progress(i / len(body_seq), "Aligning Pose.... After this, go to Step 2.")
+
             pose_t={}
             pose_t["bodies"]={}
             pose_t["bodies"]["candidate"]=body_seq[i]
