@@ -307,7 +307,6 @@ class PoseAlignmentInference:
         clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(result_pose_only, fps=fps)
         clip.write_videofile(outfn_align_pose_video, fps=fps)
         print('pose align done')
-        self.release_vram()
         return outfn_align_pose_video, outfn
 
     def init_model(self):
