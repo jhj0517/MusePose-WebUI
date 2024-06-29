@@ -31,7 +31,7 @@ class App:
         with gr.Blocks() as demo:
             md_header = self.header()
             with gr.Tabs():
-                with gr.TabItem('Step1: Pose Alignment'):
+                with gr.TabItem('1: Pose Alignment'):
                     with gr.Row():
                         with gr.Column(scale=3):
                             img_pose_input = gr.Image(label="Input Image", type="filepath", scale=5)
@@ -54,7 +54,7 @@ class App:
                                              nb_align_frame, nb_max_frame],
                                      outputs=[vid_dance_output, vid_dance_output_demo])
 
-                with gr.TabItem('Step2: MusePose Inference'):
+                with gr.TabItem('2: MusePose Inference'):
                     with gr.Row():
                         with gr.Column(scale=3):
                             img_musepose_input = gr.Image(label="Input Image", type="filepath", scale=5)
